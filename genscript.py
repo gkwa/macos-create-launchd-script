@@ -1,0 +1,100 @@
+#!/usr/bin/env python
+
+import yaml
+from jinja2 import Template
+
+installer = Template("""{# jinja2 -#}
+#!/bin/bash
+
+set -e
+
+mkdir -p $HOME/Library/Logs/{{ label }}
+mkdir -p "$HOME/Library/Application Support/{{ label }}"
+
+cat <<__eot__ >"$HOME/Library/Application Support/{{ label }}/{{ program }}"
+{{ script }}
+__eot__
+
+cat <<__eot__ >$HOME/Library/LaunchAgents/{{ label }}.plist
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+
+    <key>Label</key>
+    <string>{{ label }}</string>
+
+    <key>LowPriorityIO</key>
+    <true/>
+
+    <key>Program</key>
+    <string>$HOME/Library/Application Support/{{ label }}/{{ program }}</string>
+
+    <!-- great for debug since it runs as soon as we do launchctl load -->
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>StandardErrorPath</key>
+    <string>$HOME/Library/Logs/{{ label }}/{{ label }}.err</string>
+    <key>StandardOutPath</key>
+    <string>$HOME/Library/Logs/{{ label }}/{{ label }}.out</string>
+
+    <!-- lowest priority -->
+    <key>Nice</key>
+    <integer>19</integer>
+
+    <key>StartInterval</key>
+    <integer>{{ hourly_frequency * 60 * 60 }}</integer>
+
+  </dict>
+</plist>
+__eot__
+chmod +x "$HOME/Library/Application Support/{{ label }}/{{ program }}"
+
+# reminders for how to manipulate plsits and launchd
+: <<COMMENTBLOCK
+# debug
+launchctl unload $HOME/Library/LaunchAgents/{{ label }}.plist
+launchctl load $HOME/Library/LaunchAgents/{{ label }}.plist
+launchctl list {{ label }}
+cat $HOME/Library/Logs/{{ label }}/{{ label }}.{err,out}
+ls -la $HOME/Library/LaunchAgents/{{ label }}.plist
+launchctl unload $HOME/Library/LaunchAgents/{{ label }}.plist
+cat "$HOME/Library/Application Support/{{ label }}/{{ program }}"
+ls -la $HOME/Library/Logs/{{ label }}/*
+COMMENTBLOCK
+
+# reminder for how to cleanup/abort this plist
+: <<ABORT_UNLOAD_AND_CLEANUP
+launchctl unload $HOME/Library/LaunchAgents/{{ label }}.plist
+rm -f $HOME/Library/LaunchAgents/{{ label }}.plist
+rm -f $HOME/Library/Logs/{{ label }}/{{ label }}.{out,err}
+rm -f "$HOME/Library/Application Support/{{ label }}/{{ program }}"
+ABORT_UNLOAD_AND_CLEANUP
+
+""")
+
+documents = """
+---
+label: net.taylorm.launcha.gcloudcomponentsupdate
+program: updater
+hourly_frequency: 24
+script: |
+ #!/bin/sh
+ /usr/bin/logger -is "Starting $0"
+ /usr/local/bin/gcloud components update --quiet
+---
+label: net.taylorm.launcha.testcron
+program: touchit.sh
+hourly_frequency: 1
+script: |
+ #!/bin/sh
+ /usr/bin/logger -is "Starting $0"
+ date >>/tmp/net.taylorm.launcha.testcron.log
+"""
+
+for dct in yaml.load_all(documents):
+    label = dct['label']
+    genscript = "{}.sh".format(label)
+    with open(genscript, 'w') as file_h:
+        file_h.write(installer.render(dct))
