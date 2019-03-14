@@ -68,8 +68,8 @@ COMMENTBLOCK
 : <<ABORT_UNLOAD_AND_CLEANUP
 launchctl unload $HOME/Library/LaunchAgents/{{ label }}.plist
 rm -f $HOME/Library/LaunchAgents/{{ label }}.plist
-rm -f $HOME/Library/Logs/{{ label }}/{{ label }}.{out,err}
-rm -f "$HOME/Library/Application Support/{{ label }}/{{ program }}"
+rm -rf "$HOME/Library/Logs/{{ label }}"
+rm -rf "$HOME/Library/Application Support/{{ label }}"
 ABORT_UNLOAD_AND_CLEANUP
 
 """)
