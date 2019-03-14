@@ -3,6 +3,11 @@
 import yaml
 from jinja2 import Template
 
+tpl_logger = Template("""{# jinja2 -#}
+/usr/bin/logger -is "Starting '$HOME/Library/Application Support/{{ label }}/{{ program }}' from $HOME/Library/LaunchAgents/{{ label }}.plist"
+""")
+
+
 tpl_installer = Template("""{# jinja2 -#}
 #!/bin/bash
 
@@ -81,7 +86,7 @@ program: updater
 hourly_frequency: 24
 script: |
  #!/bin/sh
- /usr/bin/logger -is "Starting $0"
+ {{ logger }}
  /usr/local/bin/gcloud components update --quiet
 ---
 label: net.taylorm.launcha.testcron
@@ -89,11 +94,13 @@ program: touchit.sh
 hourly_frequency: 1
 script: |
  #!/bin/sh
- /usr/bin/logger -is "Starting $0"
+ {{ logger }}
  date >>/tmp/net.taylorm.launcha.testcron.log
 """
 
 for dct in yaml.load_all(documents):
+    tpl_script = Template(dct['script'])
+    dct['script'] = tpl_script.render(logger=tpl_logger.render(dct))
     label = dct['label']
     genscript = "{}.sh".format(label)
     with open(genscript, 'w') as file_h:
