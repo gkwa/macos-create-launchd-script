@@ -3,7 +3,7 @@
 import yaml
 from jinja2 import Template
 
-installer = Template("""{# jinja2 -#}
+tpl_installer = Template("""{# jinja2 -#}
 #!/bin/bash
 
 set -e
@@ -97,4 +97,4 @@ for dct in yaml.load_all(documents):
     label = dct['label']
     genscript = "{}.sh".format(label)
     with open(genscript, 'w') as file_h:
-        file_h.write(installer.render(dct))
+        file_h.write(tpl_installer.render(dct))
