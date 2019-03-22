@@ -68,11 +68,10 @@ launchctl unload $HOME/Library/LaunchAgents/{{ label }}.plist
 launchctl load $HOME/Library/LaunchAgents/{{ label }}.plist
 launchctl list {{ label }}
 launchctl list | grep {{ label }}
-cat $HOME/Library/Logs/{{ label }}/{{ label }}.{err,out}
 ls -la $HOME/Library/Logs/{{ label }}/*
 ls -la $HOME/Library/LaunchAgents/{{ label }}.plist
-launchctl unload $HOME/Library/LaunchAgents/{{ label }}.plist
 cat "$HOME/Library/Application Support/{{ label }}/{{ program }}"
+cat $HOME/Library/Logs/{{ label }}/{{ label }}.{err,out}
 COMMENTBLOCK
 
 # reminder for how to cleanup/abort this plist
