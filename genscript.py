@@ -1,7 +1,12 @@
 #!/usr/bin/env python
 
+import sys
+
 import yaml
 from jinja2 import Template
+
+if sys.version_info[0] < 3:
+    raise Exception("Must be using Python 3")
 
 tpl_logger = Template("""{# jinja2 -#}
 /usr/bin/logger -is "Starting '$HOME/Library/Application Support/{{ label }}/{{ program }}' from $HOME/Library/LaunchAgents/{{ label }}.plist"
