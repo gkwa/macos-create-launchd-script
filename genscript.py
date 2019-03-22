@@ -82,6 +82,14 @@ ABORT_UNLOAD_AND_CLEANUP
 
 documents = """
 ---
+label: net.taylorm.launcha.conditionally-pause-backblaze
+program: pause-backup
+hourly_frequency: 1
+script: |
+ #!/bin/sh
+ {{ logger }}
+ ~/pdev/taylormonacelli/conditionally-pause-backblaze/pause-backup
+---
 label: net.taylorm.launcha.gcloudcomponentsupdate
 program: updater
 hourly_frequency: 24
