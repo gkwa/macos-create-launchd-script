@@ -116,4 +116,5 @@ for dct in yaml.load_all(documents):
     label = dct['label']
     genscript = "{}.sh".format(label)
     with open(genscript, 'w') as file_h:
-        file_h.write(tpl_installer.render({ **dct, 'script' : tpl_script.render(logger=tpl_logger.render(dct)) }))
+        file_h.write(tpl_installer.render(
+            {**dct, 'script': tpl_script.render(logger=tpl_logger.render(dct))}))
