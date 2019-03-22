@@ -54,7 +54,7 @@ cat <<__eot__ >$HOME/Library/LaunchAgents/{{ label }}.plist
     <integer>19</integer>
 
     <key>StartInterval</key>
-    <integer>{{ hourly_frequency * 60 * 60 }}</integer>
+    <integer>{{ minute_frequency * 60 }}</integer>
 
   </dict>
 </plist>
@@ -89,7 +89,7 @@ documents = """
 ---
 label: net.taylorm.launcha.conditionally-pause-backblaze
 program: pause-backup
-hourly_frequency: 1
+minute_frequency: 15
 script: |
  #!/bin/sh
  {{ logger }}
@@ -97,7 +97,7 @@ script: |
 ---
 label: net.taylorm.launcha.gcloudcomponentsupdate
 program: updater
-hourly_frequency: 24
+minute_frequency: 60
 script: |
  #!/bin/sh
  {{ logger }}
@@ -105,7 +105,7 @@ script: |
 ---
 label: net.taylorm.launcha.testcron
 program: touchit.sh
-hourly_frequency: 1
+minute_frequency: 1
 script: |
  #!/bin/sh
  {{ logger }}
