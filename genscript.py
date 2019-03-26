@@ -9,15 +9,12 @@ if sys.version_info[0] < 3:
     raise Exception("Must be using Python 3")
 
 
-def eval_to_int(x):
-    """ example: convert 24*60 to 1440 """
-    if isinstance(x, str):
-        return eval(x)
-    else:
-        return x
+def convert_to_seconds(s):
+    seconds_per_unit = {"s": 1, "m": 60, "h": 3600, "d": 86400, "w": 604800}
+    return int(s[:-1]) * seconds_per_unit[s[-1]]
 
 
-jinja2.filters.FILTERS['eval_to_int'] = eval_to_int
+jinja2.filters.FILTERS['convert_to_seconds'] = convert_to_seconds
 
 tpl_logger = jinja2.Template("""{# jinja2 -#}
 /usr/bin/logger -is "Starting '$HOME/Library/Application Support/{{ label }}/{{ program }}' from $HOME/Library/LaunchAgents/{{ label }}.plist"
@@ -81,7 +78,7 @@ cat <<__eot__ >$HOME/Library/LaunchAgents/{{ label }}.plist
     <integer>19</integer>
 
     <key>StartInterval</key>
-    <integer>{{ freq|eval_to_int * 60 }}</integer>
+    <integer>{{ frequency|convert_to_seconds }}</integer>
 
   </dict>
 </plist>
@@ -116,7 +113,7 @@ documents = """
 ---
 label: net.taylorm.launcha.show-urls-for-recent-homebrews
 program: main.py
-minute_frequency: 24*60
+frequency: 1d
 script: |
  #!/bin/sh
  {{ logger }}
@@ -126,7 +123,7 @@ EnvironmentVariables:
 ---
 label: net.taylorm.launcha.conditionally-pause-backblaze
 program: pause-backup
-minute_frequency: 15
+frequency: 15m
 script: |
  #!/bin/sh
  {{ logger }}
@@ -134,7 +131,7 @@ script: |
 ---
 label: net.taylorm.launcha.gcloudcomponentsupdate
 program: updater
-minute_frequency: 24*60
+frequency: 1d
 script: |
  #!/bin/sh
  {{ logger }}
@@ -142,7 +139,7 @@ script: |
 ---
 label: net.taylorm.launcha.testcron
 program: touchit.sh
-minute_frequency: 1
+frequency: 1s
 script: |
  #!/bin/sh
  {{ logger }}
@@ -156,6 +153,4 @@ for dct in yaml.load_all(documents):
 
     with open(genscript, 'w') as file_h:
         file_h.write(tpl_installer.render(
-            {**dct,
-             'freq': dct['minute_frequency'],
-             'script': tpl_script.render(logger=tpl_logger.render(dct))}))
+            {**dct, 'script': tpl_script.render(logger=tpl_logger.render(dct))}))
