@@ -110,7 +110,6 @@ ABORT_UNLOAD_AND_CLEANUP
 """)
 
 documents = """
-
 ---
 label: net.taylorm.launcha.check-tobasco-website
 program: main.sh
