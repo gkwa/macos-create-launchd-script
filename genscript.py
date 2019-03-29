@@ -127,7 +127,7 @@ frequency: 30m
 script: |
  #!/bin/sh
  {{ logger }}
- python3 ~/pdev/taylormonacelli/show-urls-for-recent-homebrews/main.py
+ ~/pdev/taylormonacelli/show-urls-for-recent-homebrews/main.py
 EnvironmentVariables:
 - PATH: /bin:/usr/bin:/usr/local/bin
 ---
