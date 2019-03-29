@@ -123,7 +123,7 @@ EnvironmentVariables:
 ---
 label: net.taylorm.launcha.show-urls-for-recent-homebrews
 program: main.sh
-frequency: 30m
+frequency: 8h
 script: |
  #!/bin/sh
  {{ logger }}
