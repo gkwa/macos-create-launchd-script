@@ -122,7 +122,7 @@ EnvironmentVariables:
 - PATH: /bin:/usr/bin:/usr/local/bin
 ---
 label: net.taylorm.launcha.show-urls-for-recent-homebrews
-program: main.py
+program: main.sh
 frequency: 30m
 script: |
  #!/bin/sh
