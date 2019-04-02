@@ -123,11 +123,11 @@ EnvironmentVariables:
 ---
 label: net.taylorm.launcha.show-urls-for-recent-homebrews
 program: main.sh
-frequency: 8h
+frequency: 24h
 script: |
  #!/bin/sh
  {{ logger }}
- python3 ~/pdev/taylormonacelli/show-urls-for-recent-homebrews/main.py
+ python3 ~/pdev/taylormonacelli/show-urls-for-recent-homebrews/main.py --since 25h
 EnvironmentVariables:
 - PATH: /bin:/usr/bin:/usr/local/bin
 ---
