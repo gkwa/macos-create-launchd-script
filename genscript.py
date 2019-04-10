@@ -111,16 +111,6 @@ ABORT_UNLOAD_AND_CLEANUP
 
 documents = """
 ---
-label: net.taylorm.launcha.check-tobasco-website
-program: main.sh
-frequency: 3h
-script: |
- #!/bin/sh
- {{ logger }}
- ~/pdev/taylormonacelli/check-tobasco-website/main.sh
-EnvironmentVariables:
-- PATH: /bin:/usr/bin:/usr/local/bin
----
 label: net.taylorm.launcha.show-urls-for-recent-homebrews
 program: main.sh
 frequency: 12h
