@@ -115,6 +115,18 @@ ABORT_UNLOAD_AND_CLEANUP
 
 documents = """
 ---
+label: net.taylorm.launcha.homebrew-upgrade-all
+program: homebrew-upgrade-all.sh
+frequency: 1d
+script: |
+ #!/bin/sh
+ {{ logger }}
+ brew update
+ brew upgrade
+ brew cask upgrade
+EnvironmentVariables:
+- PATH: /bin:/usr/bin:/usr/local/bin
+---
 label: net.taylorm.launcha.show-urls-for-recent-homebrews
 program: main.sh
 frequency: 12h
