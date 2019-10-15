@@ -137,6 +137,16 @@ script: |
  {{ logger }}
  /usr/local/bin/gcloud components update --quiet
 ---
+label: net.taylorm.launcha.npm-global-update
+program: npm-global-update.sh
+frequency: 1d
+script: |
+ #!/bin/sh
+ {{ logger }}
+ npm update -g
+EnvironmentVariables:
+- PATH: /usr/local/bin
+---
 label: net.taylorm.launcha.testcron
 program: touchit.sh
 frequency: 1s
