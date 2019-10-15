@@ -14,14 +14,17 @@ def convert_to_seconds(s):
     return int(s[:-1]) * seconds_per_unit[s[-1]]
 
 
-jinja2.filters.FILTERS['convert_to_seconds'] = convert_to_seconds
+jinja2.filters.FILTERS["convert_to_seconds"] = convert_to_seconds
 
-tpl_logger = jinja2.Template("""{# jinja2 -#}
+tpl_logger = jinja2.Template(
+    """{# jinja2 -#}
 /usr/bin/logger -is "Starting '$HOME/Library/Application Support/{{ label }}/{{ program }}' from $HOME/Library/LaunchAgents/{{ label }}.plist"
-""")
+"""
+)
 
 
-tpl_installer = jinja2.Template("""{# jinja2 -#}
+tpl_installer = jinja2.Template(
+    """{# jinja2 -#}
 #!/bin/bash
 
 set -e
@@ -107,7 +110,8 @@ rm -rf "$HOME/Library/Logs/{{ label }}"
 rm -rf "$HOME/Library/Application Support/{{ label }}"
 ABORT_UNLOAD_AND_CLEANUP
 
-""")
+"""
+)
 
 documents = """
 ---
@@ -157,10 +161,13 @@ script: |
 """
 
 for dct in yaml.load_all(documents):
-    tpl_script = jinja2.Template(dct['script'])
-    label = dct['label']
+    tpl_script = jinja2.Template(dct["script"])
+    label = dct["label"]
     genscript = "{}.sh".format(label)
 
-    with open(genscript, 'w') as file_h:
-        file_h.write(tpl_installer.render(
-            {**dct, 'script': tpl_script.render(logger=tpl_logger.render(dct))}))
+    with open(genscript, "w") as file_h:
+        file_h.write(
+            tpl_installer.render(
+                {**dct, "script": tpl_script.render(logger=tpl_logger.render(dct))}
+            )
+        )
