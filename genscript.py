@@ -121,6 +121,10 @@ frequency: 1d
 script: |
  #!/bin/sh
  {{ logger }}
+ if /usr/bin/pmset -g batt | grep "Now drawing from 'Battery Power'" >/dev/null ; then 
+   >&2 echo Refusing to run while on battery power
+   exit 0
+ fi
  brew update
  brew upgrade
  brew cask upgrade
@@ -151,6 +155,10 @@ frequency: 1d
 script: |
  #!/bin/sh
  {{ logger }}
+ if /usr/bin/pmset -g batt | grep "Now drawing from 'Battery Power'" >/dev/null ; then 
+   >&2 echo Refusing to run while on battery power
+   exit 0
+ fi
  /usr/local/bin/gcloud components update --quiet
 ---
 label: net.taylorm.launcha.npm-global-update
